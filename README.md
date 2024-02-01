@@ -4,7 +4,45 @@ A collection of generic go middlewares.
 
 ## usage
 
-### requestid
+### utilities
+
+#### middleware chaining
+
+This module provides a function to chain middlewares together to avoid needing
+to wrap each middleware around the next which is harder to reason about. It's
+unfortunately, not as simple as some web frameworks' `router.Use` functions.
+It comes almost directly from the
+[example](https://github.com/ogen-go/example/blob/main/internal/httpmiddleware/httpmiddleware.go#L104)
+provided by the [ogen](https://ogen.dev) project.
+
+```go
+import (
+        "net/http"
+        mw "go.finelli.dev/middleware"
+        "go.finelli.dev/middleware/requestid"
+        chi "github.com/go-chi/chi/v5/middleware"
+)
+
+// ...
+
+        mux := http.NewServeMux()
+
+        // ...
+
+        &http.Server{
+                Handler: mw.Chain(mux,
+                        chi.Logger,
+                        chi.Recoverer,
+                        requestid.New(),
+                ),
+        }
+
+// ...
+```
+
+### middlewares
+
+#### requestid
 
 The `requestid` middleware is heavily inspired by the
 [gin](https://gin-gonic.com)
