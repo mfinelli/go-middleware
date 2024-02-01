@@ -38,7 +38,7 @@ type config struct {
 }
 
 const ctxKey key = iota
-var defaultHeaderKey = string("X-Request-ID")
+const defaultHeaderKey = "X-Request-ID"
 
 // Returns a new requestid middleware with the requested options.
 func New(opts ...option) middleware {
