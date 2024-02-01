@@ -37,6 +37,7 @@ type config struct {
 }
 
 var ctxKey = string("X-Request-ID")
+var defaultHeaderKey = string("X-Request-ID")
 
 // Returns a new requestid middleware with the requested options.
 func New(opts ...option) middleware {
@@ -44,13 +45,12 @@ func New(opts ...option) middleware {
 		generator: func() string {
 			return uuid.New().String()
 		},
-		header: "X-Request-ID",
+		header: defaultHeaderKey,
 	}
 
 	for _, opt := range opts {
 		opt(cfg)
 	}
-
 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(
