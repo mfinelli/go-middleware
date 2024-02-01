@@ -27,6 +27,7 @@ import (
 
 type (
 	generator  func() string
+	key        int // used to avoid context collisions
 	middleware func(http.Handler) http.Handler
 	option     func(*config)
 )
@@ -36,7 +37,7 @@ type config struct {
 	header    string
 }
 
-var ctxKey = string("X-Request-ID")
+const ctxKey key = iota
 var defaultHeaderKey = string("X-Request-ID")
 
 // Returns a new requestid middleware with the requested options.
