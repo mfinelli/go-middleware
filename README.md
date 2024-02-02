@@ -1,5 +1,8 @@
 # go-middleware
 
+[![Default](https://github.com/mfinelli/go-middleware/actions/workflows/default.yml/badge.svg)](https://github.com/mfinelli/go-middleware/actions/workflows/default.yml)
+[![Go Reference](https://pkg.go.dev/badge/go.finelli.dev/middleware.svg)](https://pkg.go.dev/go.finelli.dev/middleware)
+
 A collection of generic go middlewares.
 
 ## usage
