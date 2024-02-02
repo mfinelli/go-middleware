@@ -79,6 +79,43 @@ func Route(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
+There's also a middleware to automatically inject the request id into a
+[zerolog](https://github.com/rs/zerolog) `hlog` context.
+
+```go
+import (
+        "os"
+
+        "github.com/rs/zerolog"
+        "github.com/rs/zerolog/hlog"
+        "go.finelli.dev/middleware/requestid"
+)
+
+// ...
+
+        log := zerolog.New(os.Stdout).With().Timestamp().Logger()
+        mux := http.NewServeMux()
+
+        // ...
+
+        &http.Server{
+                Handler: hlog.NewHandler(log)(
+                        hlog.AccessHandler(/*...*/)(
+                                requestid.LogHandler("request_id")(mux))),
+        }
+
+// ...
+
+func Route(w http.ResponseWriter, r *http.Request) {
+        log := hlog.FromRequest(r)
+
+        // these log messages have the "request_id" key populated now
+        log.Info().Msg("test log message")
+
+        // ...
+}
+```
+
 ## license
 
 ```
