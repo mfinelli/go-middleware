@@ -99,9 +99,9 @@ import (
         // ...
 
         &http.Server{
-                Handler: hlog.NewHandler(log)(
+                Handler: requestid.New()(hlog.NewHandler(log)(
                         hlog.AccessHandler(/*...*/)(
-                                requestid.LogHandler("request_id")(mux))),
+                                requestid.LogHandler("request_id")(mux)))),
         }
 
 // ...
