@@ -22,7 +22,7 @@ import (
 	zl "github.com/rs/zerolog"
 )
 
-// LogHandler adds a zerolog/hlog middlewar handler to inject the request id
+// LogHandler adds a zerolog/hlog middleware handler to inject the request id
 // into the log context with the desired key.
 func LogHandler(key string) middleware {
 	return func(next http.Handler) http.Handler {
