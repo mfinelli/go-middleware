@@ -28,6 +28,7 @@ type key int
 const ctxKey key = iota
 const header = "HX-Request"
 
+// Middleware to inject the result of checking if it's an HTMX reuest or not.
 func CheckHTMX(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		isHtmx := r.Header.Get(header)
@@ -37,6 +38,8 @@ func CheckHTMX(next http.Handler) http.Handler {
 	})
 }
 
+// Given the context returns the status of the HTMX that we injected with the
+// middleware.
 func IsHTMX(ctx context.Context) bool {
 	if ctx == nil {
 		return false
