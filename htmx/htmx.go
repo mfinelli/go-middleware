@@ -25,7 +25,7 @@ import (
 
 type key int
 
-const ctxKey = iota
+const ctxKey key = iota
 const header = "HX-Request"
 
 func CheckHTMX(next http.Handler) http.Handler {
