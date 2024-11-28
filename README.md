@@ -45,6 +45,35 @@ import (
 
 ### middlewares
 
+#### htmx
+
+The `htmx` middleware simply checks if the `HX-Request`
+[header](https://htmx.org/docs/#request-headers) has been set in the request
+and if it's value is `"true"` (which is always the case when set).
+
+```go
+import "go.finelli.dev/middleware/htmx"
+
+// ...
+
+        &http.Server{
+                Handler: htmx.CheckHTMX(mux),
+        }
+
+// ...
+```
+
+Then in a route you can check if the request was sent with HTMX:
+
+```go
+import "go.finelli.dev/middleware/htmx"
+
+func Route(w http.ResponseWriter, r *http.Request) {
+        isHtmx := htmx.IsHTMX(r.Context())
+        // ...
+}
+```
+
 #### requestid
 
 The `requestid` middleware is heavily inspired by the
