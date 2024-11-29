@@ -31,9 +31,8 @@ const header = "HX-Request"
 // Middleware to inject the result of checking if it's an HTMX reuest or not.
 func CheckHTMX(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		isHtmx := r.Header.Get(header)
-		ctx := r.Context()
-		ctx = context.WithValue(ctx, ctxKey, isHtmx == "true")
+		ctx := context.WithValue(r.Context(), ctxKey,
+			r.Header.Get(header) == "true")
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
