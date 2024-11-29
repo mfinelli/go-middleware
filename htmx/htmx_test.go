@@ -25,50 +25,55 @@ import (
 )
 
 func TestCheckHTMX(t *testing.T) {
-	t.Run("No HX-Request header set", func(t *testing.T) {
-		r, e := http.NewRequest("GET", "/", nil)
-		assert.Nil(t, e)
+	tests := []struct {
+		name        string
+		setHeader   bool
+		headerValue string
+		expected    bool
+	}{
+		{
+			name:        "No HX-Request header set",
+			setHeader:   false,
+			headerValue: "",
+			expected:    false,
+		},
+		{
+			name:        "HX-Request set to empty value",
+			setHeader:   true,
+			headerValue: "",
+			expected:    false,
+		},
+		{
+			name:        "HX-Request header set but not true",
+			setHeader:   true,
+			headerValue: "nottrue",
+			expected:    false,
+		},
+		{
+			name:        "HX-Request header set",
+			setHeader:   true,
+			headerValue: "true",
+			expected:    true,
+		},
+	}
 
-		w := httptest.NewRecorder()
-		h := CheckHTMX(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			isHtmx := IsHTMX(r.Context())
-			assert.Equal(t, false, isHtmx)
-			w.WriteHeader(http.StatusOK)
-		}))
-		h.ServeHTTP(w, r)
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			r, e := http.NewRequest("GET", "/", nil)
+			assert.Nil(t, e)
 
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
+			if test.setHeader {
+				r.Header.Set("HX-Request", test.headerValue)
+			}
 
-	t.Run("HX-Request header set but not true", func(t *testing.T) {
-		r, e := http.NewRequest("GET", "/", nil)
-		assert.Nil(t, e)
-		r.Header.Set("HX-Request", "")
+			w := httptest.NewRecorder()
+			h := CheckHTMX(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				assert.Equal(t, test.expected, IsHTMX(r.Context()))
+				w.WriteHeader(http.StatusOK)
+			}))
+			h.ServeHTTP(w, r)
 
-		w := httptest.NewRecorder()
-		h := CheckHTMX(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			isHtmx := IsHTMX(r.Context())
-			assert.Equal(t, false, isHtmx)
-			w.WriteHeader(http.StatusOK)
-		}))
-		h.ServeHTTP(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
-
-	t.Run("HX-Request header set", func(t *testing.T) {
-		r, e := http.NewRequest("GET", "/", nil)
-		assert.Nil(t, e)
-		r.Header.Set("HX-Request", "true")
-
-		w := httptest.NewRecorder()
-		h := CheckHTMX(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			isHtmx := IsHTMX(r.Context())
-			assert.Equal(t, true, isHtmx)
-			w.WriteHeader(http.StatusOK)
-		}))
-		h.ServeHTTP(w, r)
-
-		assert.Equal(t, http.StatusOK, w.Code)
-	})
+			assert.Equal(t, http.StatusOK, w.Code)
+		})
+	}
 }
